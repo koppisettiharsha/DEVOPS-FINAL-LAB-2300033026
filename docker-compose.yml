@@ -11,10 +11,18 @@ services:
       - mysql_data:/var/lib/mysql
     networks:
       - springboot-mysql-net
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-padmin"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   backend:
-    image: koppisettiharsha/2300033026-backend1:latest
-    container_name: springboot
+    container_name: 2300033026-end-springboot
+    build:
+      context: ./springbootproject
+      dockerfile: backend.Dockerfile
     ports:
       - "30032:2000"
     depends_on:
@@ -24,8 +32,11 @@ services:
       - springboot-mysql-net
 
   frontend:
-    image: koppisettiharsha/2300033026-frontend1:latest
-    container_name: react
+   
+    container_name: 2300033026-end-reactapp
+    build:
+      context: ./reactapp
+      dockerfile: frontend.Dockerfile
     ports:
       - "30031:80"
     depends_on:
@@ -39,4 +50,3 @@ volumes:
 
 networks:
   springboot-mysql-net:
-
